@@ -29,8 +29,8 @@
 #include <emmintrin.h>
 #include <d3d9.h>
 #include "NullRenderers.h"
+#include "mvrInterfaces.h"
 
-#include <initguid.h>
 #include "moreuuids.h"
 #include <dxva.h>
 #include <dxva2api.h>
@@ -125,7 +125,7 @@ bool IsVideoRenderer(IBaseFilter* pBF)
     memcpy(&clsid, &GUID_NULL, sizeof(clsid));
     pBF->GetClassID(&clsid);
 
-    return (clsid == CLSID_VideoRenderer || clsid == CLSID_VideoRendererDefault);
+    return (clsid == CLSID_VideoRenderer || clsid == CLSID_VideoRendererDefault || clsid == CLSID_VideoMixingRenderer9 || clsid == CLSID_EnhancedVideoRenderer || clsid == CLSID_madVR || clsid == CLSID_DXR || clsid == CLSID_MPCVR);
 }
 
 bool IsAudioWaveRenderer(IBaseFilter* pBF)
@@ -626,6 +626,15 @@ CLSID GetCLSID(IPin* pPin)
     return GetCLSID(GetFilterFromPin(pPin));
 }
 
+CString CLSIDToString(CLSID& clsid)
+{
+    CComHeapPtr<OLECHAR> pStr;
+    if (S_OK == StringFromCLSID(clsid, &pStr) && pStr) {
+        return CString(pStr);
+    }
+    return CString();
+}
+
 bool IsCLSIDRegistered(LPCTSTR clsid)
 {
     CString rootkey1(_T("CLSID\\"));
@@ -731,6 +740,7 @@ CString BinToCString(const BYTE* ptr, size_t len)
 
 void FindFiles(CString fn, CAtlList<CString>& files)
 {
+    ExtendMaxPathLengthIfNeeded(fn, MAX_PATH);
     CString path = fn;
     path.Replace('/', '\\');
     path = path.Left(path.ReverseFind('\\') + 1);
@@ -1348,11 +1358,29 @@ void ExtendMaxPathLengthIfNeeded(CString& path, int max_length /*= MAX_PATH*/)
     }
 }
 
+bool ContainsWildcard(CString& path)
+{
+    int p = path.Find('*');
+    if (p >= 0) {
+        return true;
+    }
+    p = path.Find('?');
+    if (p >= 0) {
+        if (p == 2 && path.Left(4) == _T("\\\\?\\")) {
+            CString tmp = CString(path);
+            tmp.Delete(0, 3);
+            return tmp.Find('?') > 0;
+        }
+        return true;
+    }
+    return false;
+}
+
 void ShortenLongPath(CString& path)
 {
     if (path.GetLength() > MAX_PATH && path.Find(_T("\\\\?\\")) < 0) {
         CString longpath = _T("\\\\?\\") + path;
-        TCHAR* buffer = new TCHAR[MAX_PATH];
+        TCHAR* buffer = DEBUG_NEW TCHAR[MAX_PATH];
         long length = GetShortPathName(longpath, buffer, MAX_PATH);
         if (length > 0 && length < MAX_PATH) {
             path = buffer;
@@ -1393,7 +1421,27 @@ CString MakeFullPath(LPCTSTR path)
     return CString(c);
 }
 
-//
+inline bool _IsFourCC(const GUID& guid)
+{
+    // XXXXXXXX-0000-0010-8000-00AA00389B71
+    return (guid.Data2 == 0x0000) && (guid.Data3 == 0x0010) &&
+        (((DWORD*)guid.Data4)[0] == 0xAA000080) &&
+        (((DWORD*)guid.Data4)[1] == 0x719b3800);
+}
+
+bool GetMediaTypeFourCC(const GUID& guid, CString& fourCC)
+{
+    if (_IsFourCC(guid) && (guid.Data1 >= 0x10000)) {
+        fourCC.Format(_T("%c%c%c%c"),
+            (TCHAR)(guid.Data1 >> 0 ) & 0xFF, (TCHAR)(guid.Data1 >> 8 ) & 0xFF,
+            (TCHAR)(guid.Data1 >> 16) & 0xFF, (TCHAR)(guid.Data1 >> 24) & 0xFF);
+        fourCC.MakeUpper();
+        return true;
+    }
+
+    fourCC = _T("UNKN");
+    return false;
+}
 
 CString GetMediaTypeName(const GUID& guid)
 {
@@ -1444,7 +1492,7 @@ CStringW UTF8To16(LPCSTR utf8)
 {
     CStringW str;
     int n = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, nullptr, 0) - 1;
-    if (n < 0) {
+    if (n <= 0) {
         return str;
     }
     str.ReleaseBuffer(MultiByteToWideChar(CP_UTF8, 0, utf8, -1, str.GetBuffer(n), n + 1) - 1);
@@ -1852,52 +1900,6 @@ void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName)
     }
 }
 
-void CorrectComboListWidth(CComboBox& m_pComboBox)
-{
-    // Find the longest string in the combo box.
-    if (m_pComboBox.GetCount() <= 0) {
-        return;
-    }
-
-    CString    str;
-    CSize      sz;
-    int        dx = 0;
-    TEXTMETRIC tm;
-    CDC*       pDC = m_pComboBox.GetDC();
-    CFont*     pFont = m_pComboBox.GetFont();
-
-    // Select the listbox font, save the old font
-    CFont* pOldFont = pDC->SelectObject(pFont);
-    // Get the text metrics for avg char width
-    pDC->GetTextMetrics(&tm);
-
-    for (int i = 0; i < m_pComboBox.GetCount(); i++) {
-        m_pComboBox.GetLBText(i, str);
-        sz = pDC->GetTextExtent(str);
-
-        // Add the avg width to prevent clipping
-        sz.cx += tm.tmAveCharWidth;
-
-        if (sz.cx > dx) {
-            dx = sz.cx;
-        }
-    }
-    // Select the old font back into the DC
-    pDC->SelectObject(pOldFont);
-    m_pComboBox.ReleaseDC(pDC);
-
-    // Get the scrollbar width if it exists
-    int min_visible = m_pComboBox.GetMinVisible();
-    int scroll_width = (m_pComboBox.GetCount() > min_visible) ?
-                       ::GetSystemMetrics(SM_CXVSCROLL) : 0;
-
-    // Adjust the width for the vertical scroll bar and the left and right border.
-    dx += scroll_width + 2 *::GetSystemMetrics(SM_CXEDGE);
-
-    // Set the width of the list box so that every item is completely visible.
-    m_pComboBox.SetDroppedWidth(dx);
-}
-
 void CorrectComboBoxHeaderWidth(CWnd* pComboBox)
 {
     if (!pComboBox) {
@@ -1960,4 +1962,21 @@ CString NormalizeUnicodeStrForSearch(CString srcStr, LANGID langid) {
     CString ret = dest;
     delete[] dest;
     return ret;
+}
+
+inline const LONGLONG GetPerfCounter() {
+    auto GetPerfFrequency = [] {
+        LARGE_INTEGER freq;
+        QueryPerformanceFrequency(&freq);
+        return freq.QuadPart;
+    };
+    static const LONGLONG llPerfFrequency = GetPerfFrequency();
+    if (llPerfFrequency) {
+        LARGE_INTEGER llPerfCounter;
+        QueryPerformanceCounter(&llPerfCounter);
+        return llMulDiv(llPerfCounter.QuadPart, 10000000LL, llPerfFrequency, 0);
+    } else {
+        // ms to 100ns units
+        return timeGetTime() * 10000;
+    }
 }

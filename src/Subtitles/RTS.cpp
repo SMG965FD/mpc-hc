@@ -27,6 +27,7 @@
 #include "RTS.h"
 #include "../DSUtil/PathUtils.h"
 #include <ppl.h>
+#include "../filters/renderer/VideoRenderers/RenderersSettings.h"
 
 // WARNING: this isn't very thread safe, use only one RTS a time. We should use TLS in future.
 static HDC g_hDC;
@@ -2754,6 +2755,11 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
         dFontScaleXCompensation = m_dPARCompensation;
     }
 
+    const CRenderersSettings& r = GetRenderersSettings();
+    if (r.fontScaleOverride != 1.0) {
+        stss.fontSize *= r.fontScaleOverride;
+    }
+
     STSStyle orgstss = stss;
 
     sub->m_scrAlignment = -stss.scrAlignment;
@@ -3375,6 +3381,10 @@ STDMETHODIMP CRenderedTextSubtitle::GetStreamInfo(int iStream, WCHAR** ppName, L
     if (m_lcid && m_lcid != LCID(-1)) {
         int len = GetLocaleInfo(m_lcid, LOCALE_SENGLANGUAGE, strLanguage.GetBuffer(64), 64);
         strLanguage.ReleaseBufferSetLength(std::max(len - 1, 0));
+    }
+
+    if (strLanguage.IsEmpty() && !m_langname.IsEmpty()) {
+        strLanguage = m_langname;
     }
 
     if (!strLanguage.IsEmpty() && m_eHearingImpaired == Subtitle::HI_YES) {

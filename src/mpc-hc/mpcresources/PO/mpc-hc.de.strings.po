@@ -4,17 +4,17 @@
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Michał Trzebiatowski <michtrz@gmail.com>, 2020
-# Gaugg_Markus, 2020
 # tobsen <github@tobsen.de>, 2020
-# Steve <secure@mail.az>, 2020
 # fc5b3681a8011aa2097a1a11b3d42f55_901a704, 2021
+# Gaugg_Markus, 2021
+# Steve <secure@mail.az>, 2021
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2021-05-04 16:20:41+0000\n"
+"POT-Creation-Date: 2021-09-06 17:51:01+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: fc5b3681a8011aa2097a1a11b3d42f55_901a704, 2021\n"
+"Last-Translator: Steve <secure@mail.az>, 2021\n"
 "Language-Team: German (https://www.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -454,7 +454,7 @@ msgstr "&Pfadnamen kopieren"
 
 msgctxt "IDS_PLAYLIST_SAVE"
 msgid "Sa&ve"
-msgstr ""
+msgstr "S&peichern"
 
 msgctxt "IDS_PLAYLIST_SAVEAS"
 msgid "&Save As..."
@@ -492,6 +492,46 @@ msgctxt "IDS_SUBRESYNC_RESET"
 msgid "&Reset"
 msgstr "&Zurücksetzen"
 
+msgctxt "IDS_SUBRESYNC_ORIGINAL"
+msgid "&Original"
+msgstr "&Originalzeit"
+
+msgctxt "IDS_SUBRESYNC_CURRENT"
+msgid "&Current"
+msgstr "&Wiedergabezeit"
+
+msgctxt "IDS_SUBRESYNC_EDIT"
+msgid "&Edit"
+msgstr "&Bearbeiten"
+
+msgctxt "IDS_SUBRESYNC_YES"
+msgid "&Yes"
+msgstr "&Ja"
+
+msgctxt "IDS_SUBRESYNC_NO"
+msgid "&No"
+msgstr "&Nein"
+
+msgctxt "IDS_SUBRESYNC_DECREASE"
+msgid "&Decrease"
+msgstr "&Verringern"
+
+msgctxt "IDS_SUBRESYNC_INCREASE"
+msgid "&Increase"
+msgstr "&Erhöhen"
+
+msgctxt "IDS_OPTIONS_CAPTION"
+msgid "Options"
+msgstr "Optionen"
+
+msgctxt "IDS_SHADERS_SELECT"
+msgid "&Select Shaders..."
+msgstr "&Optionen..."
+
+msgctxt "IDS_SHADERS_DEBUG"
+msgid "&Debug Shaders..."
+msgstr "Shader-&Debugger"
+
 msgctxt "IDS_MPLAYERC_104"
 msgid "Subtitle Delay -"
 msgstr "Untertitelverzögerung (-)"
@@ -504,6 +544,22 @@ msgctxt "IDS_FILE_SAVE_THUMBNAILS"
 msgid "Save thumbnails"
 msgstr "Miniaturbilder speichern"
 
+msgctxt "IDS_SUB_POS_DOWN"
+msgid "Move subtitle down"
+msgstr ""
+
+msgctxt "IDS_SUB_POS_UP"
+msgid "Move subtitle up"
+msgstr ""
+
+msgctxt "IDS_SUB_FONT_SIZE_DEC"
+msgid "Decrease subtitle text size"
+msgstr ""
+
+msgctxt "IDS_SUB_FONT_SIZE_INC"
+msgid "Increase subtitle text size"
+msgstr ""
+
 msgctxt "IDD_PPAGEPLAYBACK"
 msgid "Playback"
 msgstr "Wiedergabe"
@@ -513,8 +569,8 @@ msgid "Player"
 msgstr "Programm"
 
 msgctxt "IDD_PPAGEDVD"
-msgid "Playback::DVD/OGM"
-msgstr "Wiedergabe::DVD/BD/OGM"
+msgid "Playback::DVD"
+msgstr "Wiedergabe::DVD"
 
 msgctxt "IDD_PPAGESUBTITLES"
 msgid "Subtitles"
@@ -636,7 +692,7 @@ msgstr "madVR"
 msgctxt "IDS_LANG_PREF_EXAMPLE"
 msgid ""
 "Enter your preferred languages here.\n"
-"For example, type: \"eng jap swe\""
+"For example, type: \"eng jpn swe\""
 msgstr ""
 "Erlaubt eine automatische Sprachauswahl nach Priorität durch bspw. \"ger eng"
 " swe\""
@@ -861,6 +917,10 @@ msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
 msgstr "Sync-Renderer (EVR-CP)"
 
+msgctxt "IDS_PPAGE_OUTPUT_AUD_MPC_REND"
+msgid "MPC Audio Renderer"
+msgstr "MPC-Audio-Renderer"
+
 msgctxt "IDS_PPAGE_OUTPUT_SURF_OFFSCREEN"
 msgid "Regular offscreen plain surface"
 msgstr "Gleichmäßige Offscreen-Oberfläche"
@@ -914,8 +974,8 @@ msgid "Null (uncompressed)"
 msgstr "Null Audio Device (uncompressed)"
 
 msgctxt "IDS_PPAGE_OUTPUT_AUD_INTERNAL_REND"
-msgid "Internal Audio Renderer"
-msgstr "Interner Audio-Renderer"
+msgid "SaneAR Audio Renderer"
+msgstr "SaneAR-Audio-Renderer"
 
 msgctxt "IDS_EMB_RESOURCES_VIEWER_NAME"
 msgid "Name"
@@ -938,10 +998,6 @@ msgstr ""
 msgctxt "IDS_SUBTITLES_DOWNLOAD"
 msgid "Download Subtitles..."
 msgstr "Untertitel herunterladen..."
-
-msgctxt "IDS_SUBTITLES_UPLOAD"
-msgid "Upload Subtitles..."
-msgstr "Untertitel hochladen..."
 
 msgctxt "IDS_SUBFILE_DELAY"
 msgid "Delay (ms):"
@@ -1019,7 +1075,7 @@ msgstr ""
 
 msgctxt "IDS_AG_OPEN_FILE_LOCATION"
 msgid "Open File Location"
-msgstr "Öffne Dateiablageort"
+msgstr "Dateispeicherort öffnen"
 
 msgctxt "IDS_AG_TOGGLE_NAVIGATION"
 msgid "Toggle Navigation Bar"
@@ -1148,46 +1204,6 @@ msgid ""
 msgstr ""
 "Vorwärts springen\n"
 "Vorwärts springen"
-
-msgctxt "IDS_SUBRESYNC_ORIGINAL"
-msgid "&Original"
-msgstr "&Originalzeit"
-
-msgctxt "IDS_SUBRESYNC_CURRENT"
-msgid "&Current"
-msgstr "&Wiedergabezeit"
-
-msgctxt "IDS_SUBRESYNC_EDIT"
-msgid "&Edit"
-msgstr "&Bearbeiten"
-
-msgctxt "IDS_SUBRESYNC_YES"
-msgid "&Yes"
-msgstr "&Ja"
-
-msgctxt "IDS_SUBRESYNC_NO"
-msgid "&No"
-msgstr "&Nein"
-
-msgctxt "IDS_SUBRESYNC_DECREASE"
-msgid "&Decrease"
-msgstr "&Verringern"
-
-msgctxt "IDS_SUBRESYNC_INCREASE"
-msgid "&Increase"
-msgstr "&Erhöhen"
-
-msgctxt "IDS_OPTIONS_CAPTION"
-msgid "Options"
-msgstr "Optionen"
-
-msgctxt "IDS_SHADERS_SELECT"
-msgid "&Select Shaders..."
-msgstr "&Optionen..."
-
-msgctxt "IDS_SHADERS_DEBUG"
-msgid "&Debug Shaders..."
-msgstr "Shader-&Debugger"
 
 msgctxt "IDS_FAVORITES_ADD"
 msgid "&Add to Favorites..."
@@ -1976,12 +1992,12 @@ msgid "Goto Next Subtitle"
 msgstr "Untertitel-Item vor"
 
 msgctxt "IDS_MPLAYERC_102"
-msgid "Shift Subtitle Left"
-msgstr "Untertitelverschiebung (-100 ms)"
+msgid "Subresync: shift -100ms"
+msgstr ""
 
 msgctxt "IDS_MPLAYERC_103"
-msgid "Shift Subtitle Right"
-msgstr "Untertitelverschiebung (+100 ms)"
+msgid "Subresync: shift +100ms"
+msgstr ""
 
 msgctxt "IDS_AG_SEEKSET"
 msgid "Jump to Beginning"
@@ -2674,7 +2690,7 @@ msgstr "Speicher erschöpft"
 
 msgctxt "IDS_MAINFRM_77"
 msgid "Error: Requires Adobe Flash Player for IE with killswitch patch"
-msgstr ""
+msgstr "Fehler: Adobe Flash Player für IE mit Killswitch-Patch benötigt"
 
 msgctxt "IDS_MAINFRM_80"
 msgid "Failed to create the filter graph object"
@@ -3196,7 +3212,7 @@ msgstr "3GP"
 
 msgctxt "IDS_MFMT_3GA"
 msgid "3GA"
-msgstr ""
+msgstr "3GA"
 
 msgctxt "IDS_MFMT_FLV"
 msgid "Flash Video"
@@ -4273,8 +4289,8 @@ msgid "/standby\t\tPut the operating system in standby mode after playback"
 msgstr "/standby\t\tWechselt in den Standby-Modus (nach Wiedergabe)"
 
 msgctxt "IDS_CMD_HIBERNATE"
-msgid "/hibernate\tHibernate operating system after playback"
-msgstr "/hibernate\tWechselt in den Ruhezustand (nach Wiedergabe)"
+msgid "/hibernate\t\tHibernate operating system after playback"
+msgstr "/hibernate\t\tWechselt in den Ruhezustand (nach Wiedergabe)"
 
 msgctxt "IDS_CMD_LOGOFF"
 msgid "/logoff\t\tLog off after playback"
@@ -4599,3 +4615,95 @@ msgstr ""
 msgctxt "IDS_PPAGEADVANCED_USE_TITLE_IN_RECENT_FILE_LIST"
 msgid "Use title in recent file list."
 msgstr "Benutze Titel aus der zuletzt benutzten Dateiliste."
+
+msgctxt "IDS_PPAGEADVANCED_SHOW_ABMARKS_STATUSBAR"
+msgid "Display current A-B repeat marks in status bar."
+msgstr "Aktuelle A-B Wiederholungsmarken in Statusleiste anzeigen."
+
+msgctxt "IDS_PPAGEADVANCED_SHOW_VIDEOINFO_STATUSBAR"
+msgid "Display video info (codec name, resolution) in status bar."
+msgstr "Videoinformationen (Codecname, Auflösung) in Statusleiste anzeigen."
+
+msgctxt "IDS_ARS_WASAPI_MODE"
+msgid "WASAPI mode:"
+msgstr "WASAPI-Modus:"
+
+msgctxt "IDS_ARS_EXCLUSIVE"
+msgid "Exclusive"
+msgstr "Exklusiv"
+
+msgctxt "IDS_ARS_SHARED"
+msgid "Shared"
+msgstr "Geteilt"
+
+msgctxt "IDS_ARS_BITEXACT_OUTPUT"
+msgid "Allow bit-exact output"
+msgstr "Bit-genaue Ausgabe erlauben"
+
+msgctxt "IDS_ARS_SYSTEM_LAYOUT_CHANNELS"
+msgid "Use system layout channels"
+msgstr "Kanäle des Systemlayouts verwenden"
+
+msgctxt "IDS_ARS_SOUND_DEVICE"
+msgid "Sound Device:"
+msgstr "Audiogerät:"
+
+msgctxt "IDS_ARS_RELEASE_DEVICE_IDLE"
+msgid "Release device when idle"
+msgstr "Gerät im Leerlauf freigeben"
+
+msgctxt "IDS_ARS_CROSSFEED"
+msgid "Enable stereo crossfeed (for headphones)"
+msgstr "Stereo-Kreuzung aktivieren (für Kopfhörer)"
+
+msgctxt "IDS_ARS_DEVICE_PERIOD"
+msgid "Device buffer:"
+msgstr "Geräte-Puffer:"
+
+msgctxt "IDS_ARS_CHECK_FORMAT"
+msgid "Do not check format support"
+msgstr "Formatunterstützung nicht prüfen"
+
+msgctxt "IDS_ARS_STATUS"
+msgid "Status"
+msgstr "Status"
+
+msgctxt "IDS_ARS_DEVICE"
+msgid "Device:"
+msgstr "Gerät:"
+
+msgctxt "IDS_ARS_MODE"
+msgid "Mode:"
+msgstr "Modus:"
+
+msgctxt "IDS_ARS_INPUT"
+msgid "Input"
+msgstr "Eingabe"
+
+msgctxt "IDS_ARS_OUTPUT"
+msgid "Output"
+msgstr "Ausgabe"
+
+msgctxt "IDS_ARS_FORMAT"
+msgid "Format:"
+msgstr "Format:"
+
+msgctxt "IDS_ARS_SAMPLERATE"
+msgid "Sample rate:"
+msgstr "Abtastrate:"
+
+msgctxt "IDS_ARS_CHANNELS"
+msgid "Channels:"
+msgstr "Kanäle:"
+
+msgctxt "IDS_ARS_WASAPI_METHOD"
+msgid "WASAPI method:"
+msgstr "WASAPI-Methode:"
+
+msgctxt "IDS_ARS_DUMMY_CHANNELS"
+msgid "Don't fill channels when upmixing"
+msgstr "Kanäle während des Upmix nicht füllen"
+
+msgctxt "IDS_AG_DEFAULT"
+msgid "Default"
+msgstr "Standard"

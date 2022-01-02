@@ -69,7 +69,7 @@ protected:
                            const CRect& videoRect,
                            SubPicDesc* pTarget = nullptr,
                            const double videoStretchFactor = 1.0,
-                           int xOffsetInPixels = 0);
+                           int xOffsetInPixels = 0, int yOffsetInPixels = 0);
 
     void UpdateXForm();
     HRESULT CreateDIBFromSurfaceData(D3DSURFACE_DESC desc, D3DLOCKED_RECT r, BYTE* lpDib) const;
@@ -78,6 +78,9 @@ protected:
     bool m_bDefaultVideoAngleSwitchAR;
     XForm m_xform;
     void Transform(CRect r, Vector v[4]);
+
+    bool m_bHookedNewSegment;
+    bool m_bHookedReceive;
 
 public:
     CSubPicAllocatorPresenterImpl(HWND hWnd, HRESULT& hr, CString* _pError);

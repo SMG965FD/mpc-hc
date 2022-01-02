@@ -41,6 +41,7 @@
 
 #define IDS_RS_FAV_REMEMBERPOS              _T("RememberPosition")
 #define IDS_RS_FAV_RELATIVEDRIVE            _T("RelativeDrive")
+#define IDS_RS_FAV_REMEMBERABMARKS          _T("RememberABMarks")
 #define IDS_RS_DVDPOS                       _T("RememberDVDPos")
 #define IDS_RS_FILEPOS                      _T("RememberFilePos")
 #define IDS_RS_FILEPOSLONGER                _T("RememberPosForLongerThan")
@@ -88,12 +89,17 @@
 #define IDS_RS_ALLOW_INACCURATE_FASTSEEK    _T("AllowInaccurateFastseek")
 #define IDS_RS_LOOP_FOLDER_NEXT_FILE        _T("LoopFolderOnPlayNextFile")
 #define IDS_RS_TIME_REFRESH_INTERVAL        _T("TimeRefreshInterval")
+#define IDS_RS_SHOW_ABMARKS_STATUSBAR       _T("ShowABMarksInStatusbar")
 #define IDS_RS_SHOW_LANG_STATUSBAR          _T("ShowLangInStatusbar")
 #define IDS_RS_SHOW_FPS_STATUSBAR           _T("ShowFPSInStatusbar")
+#define IDS_RS_SHOW_VIDEOINFO_STATUSBAR     _T("ShowVideoInfoInStatusbar")
 #define IDS_RS_ADD_LANGCODE_WHEN_SAVE_SUBTITLES _T("AddLanguageCodeWhenSaveSubtitles")
 #define IDS_RS_USE_TITLE_IN_RECENT_FILE_LIST    _T("UseTitleInRecentFileList")
 #define IDS_RS_YDL_SUBS_PREFERENCE          _T("YDLSubsPreference")
-#define IDS_RS_USE_AUTOMATIC_CAPTIONS       _T("UseAutomaticCaptions") 
+#define IDS_RS_USE_AUTOMATIC_CAPTIONS       _T("UseAutomaticCaptions")
+#define IDS_RS_LOCK_NOPAUSE                 _T("LockNoPause")
+#define IDS_RS_USE_SMTC                     _T("UseSMTC")
+#define IDS_RS_RELOAD_AFTER_LONG_PAUSE      _T("ReloadAfterLongPause")
 
 // Audio
 #define IDS_RS_VOLUME                       _T("Volume")
@@ -120,7 +126,7 @@
 #define IDS_RS_COLOR_HUE                    _T("VideoHue")
 #define IDS_RS_COLOR_SATURATION             _T("VideoSaturation")
 
-// DVD/OGM
+// DVD
 #define IDS_RS_DVDPATH                      _T("DVDPath")
 #define IDS_RS_USEDVDPATH                   _T("UseDVDPath")
 #define IDS_RS_MENULANG                     _T("MenuLang")
@@ -168,6 +174,7 @@
 #define IDS_RS_SUBTITLESLANGORDER           _T("SubtitlesLanguageOrder")
 #define IDS_RS_AUDIOSLANGORDER              _T("AudiosLanguageOrder")
 #define IDS_RS_BLOCKVSFILTER                _T("BlockVSFilter")
+#define IDS_RS_BLOCKRDP                     _T("BlockRDP")
 #define IDS_RS_ACCELTBL                     _T("AccelTbl")
 #define IDS_RS_WINLIRCADDR                  _T("WinLircAddr")
 #define IDS_RS_WINLIRC                      _T("UseWinLirc")
@@ -270,6 +277,7 @@
 #define IDS_RS_BDA_SCAN_FREQ_START          _T("BDAScanFreqStart")
 #define IDS_RS_BDA_SCAN_FREQ_END            _T("BDAScanFreqEnd")
 #define IDS_RS_BDA_BANDWIDTH                _T("BDABandWidth")
+#define IDS_RS_BDA_SYMBOLRATE               _T("BDASymbolRate")
 #define IDS_RS_BDA_USE_OFFSET               _T("BDAUseOffset")
 #define IDS_RS_BDA_OFFSET                   _T("BDAOffset")
 #define IDS_RS_BDA_IGNORE_ENCRYPTED_CHANNELS _T("BDAIgnoreEncryptedChannels")
@@ -341,7 +349,6 @@
 #define IDS_RS_SANEAR_DEVICE_ID             _T("DeviceId")
 #define IDS_RS_SANEAR_DEVICE_EXCLUSIVE      _T("DeviceExclusive")
 #define IDS_RS_SANEAR_DEVICE_BUFFER         _T("DeviceBufferDuration")
-#define IDS_RS_SANEAR_ALLOW_BITSTREAMING    _T("AllowBitstreaming")
 #define IDS_RS_SANEAR_CROSSFEED_ENABLED     _T("CrossfeedEnabled")
 #define IDS_RS_SANEAR_CROSSFEED_CUTOFF_FREQ _T("CrossfeedCutoffFrequency")
 #define IDS_RS_SANEAR_CROSSFEED_LEVEL       _T("CrossfeedLevel")
@@ -352,6 +359,7 @@
 #define IDS_RS_YDL_MAX_HEIGHT               _T("YDLMaxHeight")
 #define IDS_RS_YDL_VIDEO_FORMAT             _T("YDLVideoFormat")
 #define IDS_RS_YDL_AUDIO_ONLY               _T("YDLAudioOnly")
+#define IDS_RS_YDL_EXEPATH                  _T("YDLExePath")
 #define IDS_RS_YDL_COMMAND_LINE             _T("YDLCommandLine")
 
 #define IDS_RS_ENABLE_CRASH_REPORTER        _T("EnableCrashReporter")

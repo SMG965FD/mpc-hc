@@ -2565,6 +2565,10 @@ CSyncAP::~CSyncAP()
     m_pMediaType = nullptr;
     m_pClock = nullptr;
     m_pD3DManager = nullptr;
+
+    if (m_bHookedNewSegment) {
+        UnhookNewSegment();
+    }
 }
 
 HRESULT CSyncAP::CheckShutdown() const
@@ -2665,14 +2669,15 @@ STDMETHODIMP CSyncAP::CreateRenderer(IUnknown** ppRenderer)
             hr = pMFVR->InitializeRenderer(nullptr, pVP);
         }
 
-        CComPtr<IPin> pPin = GetFirstPin(pBF);
-        CComQIPtr<IMemInputPin> pMemInputPin = pPin;
-
-        m_bUseInternalTimer = HookNewSegmentAndReceive((IPinC*)(IPin*)pPin, (IMemInputPinC*)(IMemInputPin*)pMemInputPin);
-        if (FAILED(hr)) {
-            *ppRenderer = nullptr;
-        } else {
+        if (SUCCEEDED(hr)) {
+            CComPtr<IPin> pPin = GetFirstPin(pBF);
+            if (HookNewSegment((IPinC*)(IPin*)pPin)) {
+                m_bUseInternalTimer = true;
+                m_bHookedNewSegment = true;
+            }
             *ppRenderer = pBF.Detach();
+        } else {
+            *ppRenderer = nullptr;
         }
     } while (0);
 
@@ -4325,12 +4330,6 @@ STDMETHODIMP CSyncRenderer::UpdateAlphaBitmapParameters(const VMR9AlphaBitmap* p
     return S_OK;
 }
 
-STDMETHODIMP CSyncRenderer::support_ffdshow()
-{
-    queue_ffdshow_support = true;
-    return S_OK;
-}
-
 STDMETHODIMP CSyncRenderer::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
     HRESULT hr;
@@ -4356,11 +4355,6 @@ STDMETHODIMP CSyncRenderer::NonDelegatingQueryInterface(REFIID riid, void** ppv)
     hr = m_pEVR ? m_pEVR->QueryInterface(riid, ppv) : E_NOINTERFACE;
     if (m_pEVR && FAILED(hr)) {
         hr = m_pAllocatorPresenter ? m_pAllocatorPresenter->QueryInterface(riid, ppv) : E_NOINTERFACE;
-        if (FAILED(hr)) {
-            if (riid == __uuidof(IVMRffdshow9)) { // Support ffdshow queueing. We show ffdshow that this is patched MPC-HC.
-                return GetInterface((IVMRffdshow9*)this, ppv);
-            }
-        }
     }
     return SUCCEEDED(hr) ? hr : __super::NonDelegatingQueryInterface(riid, ppv);
 }

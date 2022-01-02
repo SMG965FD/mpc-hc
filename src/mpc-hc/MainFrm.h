@@ -50,6 +50,8 @@
 #include <qnetwork.h>
 #include "../DSUtil/FontInstaller.h"
 #include "AppSettings.h"
+#include "../filters/transform/VSFilter/IDirectVobSub.h"
+#include "MediaTransControls.h"
 
 #define AfxGetMainFrame() dynamic_cast<CMainFrame*>(AfxGetMainWnd())
 
@@ -134,6 +136,7 @@ public:
     ULONG FrequencyStart;
     ULONG FrequencyStop;
     ULONG Bandwidth;
+    ULONG SymbolRate;
     LONG  Offset;
     HWND  Hwnd;
 };
@@ -154,18 +157,39 @@ struct SubtitleInput {
         : pSubStream(pSubStream), pSourceFilter(pSourceFilter) {};
 };
 
+struct FileFavorite {
+    CString Name;
+    REFERENCE_TIME Start;
+    REFERENCE_TIME MarkA;
+    REFERENCE_TIME MarkB;
+    BOOL RelativeDrive;
+
+    FileFavorite() {
+        Start = MarkA = MarkB = 0;
+        RelativeDrive = FALSE;
+    }
+
+    static bool TryParse(const CString& fav, FileFavorite& ff);
+    static bool TryParse(const CString& fav, FileFavorite& ff, CAtlList<CString>& parts);
+
+    CString ToString() const;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CMainFrame
+
 class CMainFrame : public CFrameWnd, public CDropClient
 {
 public:
 
     DpiHelper m_dpi;
 
-    enum class Timer32HzSubscriber {
+    enum class TimerHiderSubscriber {
         TOOLBARS_HIDER,
         CURSOR_HIDER,
         CURSOR_HIDER_D3DFS,
     };
-    OnDemandTimer<Timer32HzSubscriber> m_timer32Hz;
+    OnDemandTimer<TimerHiderSubscriber> m_timerHider;
 
     enum class TimerOneTimeSubscriber {
         TOOLBARS_DELAY_NOTLOADED,
@@ -191,7 +215,7 @@ private:
         TIMER_STREAMPOSPOLLER2,
         TIMER_STATS,
         TIMER_UNLOAD_UNUSED_EXTERNAL_OBJECTS,
-        TIMER_32HZ,
+        TIMER_HIDER,
         TIMER_WINDOW_FULLSCREEN,
         TIMER_DELAYEDSEEK,
         TIMER_ONETIME_START,
@@ -236,6 +260,7 @@ private:
     CComQIPtr<IBufferInfo> m_pBI;
     CComQIPtr<IAMOpenProgress> m_pAMOP;
     CComQIPtr<IAMMediaContent, &IID_IAMMediaContent> m_pAMMC;
+    CComQIPtr<IAMNetworkStatus, &IID_IAMNetworkStatus> m_pAMNS;
     // SmarkSeek
     CComPtr<IGraphBuilder2>         m_pGB_preview;
     CComQIPtr<IMediaControl>        m_pMC_preview;
@@ -282,6 +307,8 @@ private:
 
     CComPtr<IUnknown> m_pProv;
 
+    CComQIPtr<IDirectVobSub> m_pDVS;
+
     bool m_bUsingDXVA;
     LPCTSTR m_HWAccelType;
     void UpdateDXVAStatus();
@@ -302,8 +329,11 @@ private:
     POSITION m_posFirstExtSub;
     SubtitleInput m_pCurrentSubInput;
 
+    // StatusBar message text parts
     CString currentAudioLang;
     CString currentSubLang;
+    CString m_statusbarVideoFourCC;
+    CString m_statusbarVideoSize;
 
     SubtitleInput* GetSubtitleInput(int& i, bool bIsOffset = false);
 
@@ -391,6 +421,9 @@ private:
 
     bool m_fEndOfStream;
     ULONGLONG m_dwLastPause;
+    ULONGLONG m_dwReloadPos;
+    int m_iReloadAudioIdx;
+    int m_iReloadSubIdx;
 
     bool m_bRememberFilePos;
 
@@ -575,8 +608,9 @@ protected:
 public:
     void OpenCurPlaylistItem(REFERENCE_TIME rtStart = 0, bool reopen = false);
     void OpenMedia(CAutoPtr<OpenMediaData> pOMD);
-    void PlayFavoriteFile(CString fav);
+    void PlayFavoriteFile(const CString& fav);
     void PlayFavoriteDVD(CString fav);
+    void ParseFavoriteFile(const CString& fav, CAtlList<CString>& args, REFERENCE_TIME* prtStart = nullptr);
     bool ResetDevice();
     bool DisplayChange();
     void CloseMedia(bool bNextIsQueued = false);
@@ -588,10 +622,10 @@ public:
 
     bool m_bTrayIcon;
     void ShowTrayIcon(bool bShow);
-    void SetTrayTip(CString str);
+    void SetTrayTip(const CString& str);
 
     CSize GetVideoSize() const;
-    CSize GetVideoSizeWithRotation() const;
+    CSize GetVideoSizeWithRotation(bool forPreview = false) const;
     void ToggleFullscreen(bool fToNearest, bool fSwitchScreenResWhenHasTo);
     void ToggleD3DFullscreen(bool fSwitchScreenResWhenHasTo);
     void MoveVideoWindow(bool fShowStats = false, bool bSetStoppedVideoRect = false);
@@ -600,8 +634,9 @@ public:
     void RepaintVideo();
     void HideVideoWindow(bool fHide);
 
-    OAFilterState GetMediaStateDirect();
-    OAFilterState GetMediaState();
+    OAFilterState GetMediaStateDirect() const;
+    OAFilterState GetMediaState() const;
+    OAFilterState CMainFrame::UpdateCachedMediaState();
     bool MediaControlRun(bool waitforcompletion = false);
     bool MediaControlPause(bool waitforcompletion = false);
     bool MediaControlStop(bool waitforcompletion = false);
@@ -636,6 +671,8 @@ public:
 
     void SetAudioTrackIdx(int index);
     void SetSubtitleTrackIdx(int index);
+    int GetCurrentAudioTrackIdx();
+    int GetCurrentSubtitleTrackIdx();
 
     void AddFavorite(bool fDisplayMessage = false, bool fShowDialog = true);
 
@@ -663,6 +700,7 @@ public:
 
     void DoAfterPlaybackEvent();
     bool SearchInDir(bool bDirForward, bool bLoop = false);
+    bool WildcardFileSearch(CString searchstr, std::set<CString, CStringUtils::LogicalLess>& results);
     CString lastOpenFile;
     bool CanSkipFromClosedFile();
 
@@ -1010,12 +1048,13 @@ public:
     afx_msg void OnViewOSDShowFileName();
     afx_msg void OnD3DFullscreenToggle();
     afx_msg void OnGotoSubtitle(UINT nID);
-    afx_msg void OnShiftSubtitle(UINT nID);
+    afx_msg void OnSubresyncShiftSub(UINT nID);
     afx_msg void OnSubtitleDelay(UINT nID);
+    afx_msg void OnSubtitlePos(UINT nID);
+    afx_msg void OnSubtitleFontSize(UINT nID);
 
     afx_msg void OnPlayPlay();
     afx_msg void OnPlayPause();
-    afx_msg void OnPlayPauseI();
     afx_msg void OnPlayPlaypause();
     afx_msg void OnApiPlay();
     afx_msg void OnApiPause();
@@ -1129,14 +1168,13 @@ public:
     void        SetClosedCaptions(bool enable);
     LPCTSTR     GetDVDAudioFormatName(const DVD_AudioAttributes& ATR) const;
     void        SetAudioDelay(REFERENCE_TIME rtShift);
-    void        SetSubtitleDelay(int delay_ms);
+    void        SetSubtitleDelay(int delay_ms, bool relative = false);
     //void      AutoSelectTracks();
-    bool        IsRealEngineCompatible(CString strFilename) const;
     void        SetTimersPlay();
     void        KillTimerDelayedSeek();
     void        KillTimersStop();
     void        AdjustStreamPosPoller(bool restart);
-
+    void        ResetSubtitlePosAndSize(bool repaint = false);
 
     // MPC API functions
     void        ProcessAPICommand(COPYDATASTRUCT* pCDS);
@@ -1219,6 +1257,9 @@ protected:
 
     bool IsImageFile(CString fn);
 
+    // Handles MF_DEFAULT and escapes '&'
+    static BOOL AppendMenuEx(CMenu& menu, UINT nFlags, UINT_PTR nIDNewItem, CString& text);
+
 public:
     afx_msg UINT OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData);
     afx_msg void OnSessionChange(UINT nSessionState, UINT nId);
@@ -1249,11 +1290,22 @@ public:
     RecentFileEntry m_current_rfe;
     static bool IsOnYDLWhitelist(const CString url);
 
-private:
     bool CanSendToYoutubeDL(const CString url);
     bool ProcessYoutubeDLURL(CString url, bool append, bool replace = false);
     bool DownloadWithYoutubeDL(CString url, CString filename);
 
+    /**
+     * @brief Get title of file
+     * @param fTitleBarTextTitle 
+     * @return 
+    */
+    CString getBestTitle(bool fTitleBarTextTitle = true);
+    MediaTransControls m_media_trans_control;
+
+    void MediaTransportControlSetMedia();
+    void MediaTransportControlUpdateState(OAFilterState state);
+
+private:
     bool watchingFileDialog;
     HWND fileDialogHandle;
     CMPCThemeUtil* fileDialogHookHelper;

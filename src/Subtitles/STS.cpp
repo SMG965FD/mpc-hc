@@ -2225,8 +2225,9 @@ static std::vector<int> PreferredOpenFuncts(CString fn) {
             if (OpenFuncts[i].open == OpenUSF) functs.insert(functs.begin(), i);
         } else if (fileExt == _T("style")) {
             if (OpenFuncts[i].open == OpenSubStationAlpha) functs.push_back(i);
-        } else if (fileExt == _T("tmp")) { // used for embedded subs
-            if (OpenFuncts[i].open == OpenSubRipper || OpenFuncts[i].open == OpenSubStationAlpha || OpenFuncts[i].open == OpenVTT) functs.push_back(i);
+        } else if (fileExt == _T("tmp")) { // used for embedded subs and downloaded subs
+            if (OpenFuncts[i].open == OpenSubRipper || OpenFuncts[i].open == OpenSubStationAlpha || OpenFuncts[i].open == OpenVTT) functs.insert(functs.begin(), i);
+            else functs.push_back(i);
         } else {
             functs.push_back(i);
         }
@@ -2238,6 +2239,7 @@ static std::vector<int> PreferredOpenFuncts(CString fn) {
 
 CSimpleTextSubtitle::CSimpleTextSubtitle()
     : m_lcid(0)
+    , m_langname()
     , m_subtitleType(Subtitle::SRT)
     , m_mode(TIME)
     , m_encoding(CTextFile::DEFAULT_ENCODING)
@@ -2825,8 +2827,6 @@ STSStyle* CSimpleTextSubtitle::GetStyle(int i)
         m_styles.Lookup(_T("Default"), style);
     }
 
-    ASSERT(style);
-
     return style;
 }
 
@@ -3076,7 +3076,7 @@ bool CSimpleTextSubtitle::Open(CString fn, int CharSet, CString name, CString vi
     }
 
     if (name.IsEmpty()) {
-        name = Subtitle::GuessSubtitleName(fn, videoName, m_lcid, m_eHearingImpaired);
+        name = Subtitle::GuessSubtitleName(fn, videoName, m_lcid, m_langname, m_eHearingImpaired);
     }
 
     return Open(&f, CharSet, name);
@@ -3090,6 +3090,12 @@ bool CSimpleTextSubtitle::Open(BYTE* data, int length, int CharSet, CString prov
     name.Format(_T("%s.%s"), static_cast<LPCWSTR>(lang), static_cast<LPCWSTR>(ext));
     CW2A temp(lang);
     m_lcid = ISOLang::ISO6391ToLcid(temp);
+    if (m_lcid > 0) {
+        m_langname = ISOLang::LCIDToLanguage(m_lcid);
+    }
+    if (m_langname.IsEmpty()) {
+        m_langname = ISOLang::ISO639XToLanguage(temp);
+    }
     return Open(data, length, CharSet, name);
 }
 
@@ -3101,6 +3107,12 @@ bool CSimpleTextSubtitle::Open(CString data, CTextFile::enc SaveCharSet, int Rea
     name.Format(_T("%s.%s"), static_cast<LPCWSTR>(lang), static_cast<LPCWSTR>(ext));
     CW2A temp(lang);
     m_lcid = ISOLang::ISO6391ToLcid(temp);
+    if (m_lcid > 0) {
+        m_langname = ISOLang::LCIDToLanguage(m_lcid);
+    }
+    if (m_langname.IsEmpty()) {
+        m_langname = ISOLang::ISO639XToLanguage(temp);
+    }
     TCHAR path[MAX_PATH];
     if (!GetTempPath(MAX_PATH, path)) {
         return false;

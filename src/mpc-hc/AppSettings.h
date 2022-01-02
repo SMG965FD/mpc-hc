@@ -149,6 +149,9 @@ enum MCE_RAW_INPUT {
 #define AUDRNDT_NULL_COMP       _T("Null Audio Renderer (Any)")
 #define AUDRNDT_NULL_UNCOMP     _T("Null Audio Renderer (Uncompressed)")
 #define AUDRNDT_INTERNAL        _T("Internal Audio Renderer")
+#define AUDRNDT_SANEAR          _T("SaneAR Audio Renderer")
+#define AUDRNDT_MPC             L"MPC Audio Renderer"
+
 
 #define DEFAULT_SUBTITLE_PATHS  _T(".;.\\subtitles;.\\subs")
 #define DEFAULT_JUMPDISTANCE_1  1000
@@ -601,6 +604,7 @@ public:
     bool            fReportFailedPins;
     bool            fAutoloadAudio;
     bool            fBlockVSFilter;
+    bool            bBlockRDP;
     UINT            nVolumeStep;
     UINT            nSpeedStep;
     int             nDefaultToolbarSize;
@@ -608,6 +612,9 @@ public:
     bool            bSaveImageCurrentTime;
     bool            bAllowInaccurateFastseek;
     bool            bLoopFolderOnPlayNextFile;
+    bool            bLockNoPause;
+    bool            bUseSMTC;
+    int             iReloadAfterLongPause;
 
     enum class AfterPlayback {
         DO_NOTHING,
@@ -618,7 +625,7 @@ public:
         EXIT
     } eAfterPlayback;
 
-    // DVD/OGM
+    // DVD
     bool            fUseDVDPath;
     CString         strDVDPath;
     LCID            idMenuLang, idAudioLang, idSubtitlesLang;
@@ -659,6 +666,7 @@ public:
     int             iBDAScanFreqStart;
     int             iBDAScanFreqEnd;
     int             iBDABandwidth;
+    int             iBDASymbolRate;
     bool            fBDAUseOffset;
     int             iBDAOffset;
     bool            fBDAIgnoreEncryptedChannels;
@@ -778,6 +786,7 @@ public:
     // Add Favorite
     bool            bFavRememberPos;
     bool            bFavRelativeDrive;
+    bool            bFavRememberABMarks;
     // Save Image...
     CString         strSnapshotPath, strSnapshotExt;
     bool			bSnapShotSubtitles;
@@ -859,6 +868,7 @@ public:
     int iYDLMaxHeight;
     int iYDLVideoFormat;
     bool bYDLAudioOnly;
+    CString sYDLExePath;
     CString sYDLCommandLine;
 
     bool bEnableCrashReporter;
@@ -866,6 +876,8 @@ public:
     int nStreamPosPollerInterval;
     bool bShowLangInStatusbar;
     bool bShowFPSInStatusbar;
+    bool bShowABMarksInStatusbar;
+    bool bShowVideoInfoInStatusbar;
 
     bool bAddLangCodeWhenSaveSubtitles;
     bool bUseTitleInRecentFileList;

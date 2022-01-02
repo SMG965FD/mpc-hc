@@ -71,7 +71,7 @@ public:
     DWORD      SrtResX = 1920;
     DWORD      SrtResY = 1080;
     bool       Kerning = false;
-    bool       ScaledBorderAndShadow = true;
+    bool       ScaledBorderAndShadow = false;
     CString    customTags;
 #endif
 
@@ -150,6 +150,7 @@ protected:
 public:
     CString m_name;
     LCID m_lcid;
+    CString m_langname;
     Subtitle::SubType m_subtitleType;
     tmode m_mode;
     CTextFile::enc m_encoding;
